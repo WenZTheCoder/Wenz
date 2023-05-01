@@ -1,0 +1,85 @@
+const board = document.getElementById("board");
+
+const pieces = {
+  "R": "&#9814;",
+  "N": "&#9816;",
+  "B": "&#9815;",
+  "Q": "&#9813;",
+  "K": "&#9812;",
+  "P": "&#9817;"
+};
+
+const startingPosition = [  ["R", "N", "B", "Q", "K", "B", "N", "R"],
+  ["P", "P", "P", "P", "P", "P", "P", "P"],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  ["p", "p", "p", "p", "p", "p", "p", "p"],
+  ["r", "n", "b", "q", "k", "b", "n", "r"]
+];
+
+let selectedPiece = null;
+let possibleMoves = [];
+
+function renderBoard() {
+  board.innerHTML = "";
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      const square = document.createElement("div");
+      square.classList.add("square");
+      if ((i + j) % 2 === 0) {
+        square.classList.add("white");
+      } else {
+        square.classList.add("black");
+      }
+      if (startingPosition[i][j] !== null) {
+        const piece = document.createElement("div");
+        piece.classList.add("piece");
+        piece.innerHTML = pieces[startingPosition[i][j].toUpperCase()];
+        square.appendChild(piece);
+      }
+      square.addEventListener("click", () => {
+        if (selectedPiece === null) {
+          if (startingPosition[i][j] !== null) {
+            selectedPiece = { type: startingPosition[i][j], x: j, y: i };
+            possibleMoves = getValidMoves(selectedPiece, startingPosition);
+            highlightMoves(possibleMoves);
+          }
+        } else {
+          if (possibleMoves.find(move => move.x === j && move.y === i)) {
+            startingPosition[selectedPiece.y][selectedPiece.x] = null;
+            startingPosition[i][j] = selectedPiece.type;
+            renderBoard();
+          }
+          clearHighlights();
+          selectedPiece = null;
+          possibleMoves = [];
+        }
+      });
+      board.appendChild(square);
+    }
+  }
+}
+
+function getValidMoves(piece, position) {
+  const validMoves = [];
+  // TODO: Implement function to get valid moves for piece
+  return validMoves;
+}
+
+function highlightMoves(moves) {
+  moves.forEach(move => {
+    const { x, y } = move;
+    const square = board.children[y * 8 + x];
+    square.classList.add("highlight");
+  });
+}
+
+function clearHighlights() {
+  const squares = board.querySelectorAll(".square");
+  squares.forEach(square => square.classList.remove("highlight"));
+}
+
+renderBoard();
+
